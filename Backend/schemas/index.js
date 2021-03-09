@@ -5,8 +5,8 @@ module.exports = () => {
         if (process.env.NODE_ENV !== 'production') {
             mongoose.set('debug', true);
         }
-        mongoose.connect('mongodb://admin:Qkrrlfgks5909@localhost:27017/admin', {
-            dbName: 'nodejs',
+        mongoose.connect(process.env.MONGO, {
+            dbName: 'hello',
             useNewUrlParser: true,
             useUnifiedTopology: true,
         }, (error) => {

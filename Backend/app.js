@@ -1,27 +1,25 @@
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const morgan = require('morgan'); //로그를 관리하기위한 라이브러리
-const path = require('path');
 const cors = require('cors');
 const session = require('express-session'); //세션을 관리하기위한 미들웨어
 const flash = require('connect-flash'); //일회성 메시지를 띄울 때 사용
 const passport = require('passport');
-const passportLocal = require('passport-local');
-const bcrypt = require('bcryptjs');
 
+const passportConfig = require('./passport/passportConfig');
 const connect = require('./schemas');
-
 require('dotenv').config();
+const authRouter = require('./routes/auth');
 
-const PageRouter = require('./routes/page');
-//const authRouter = require('./routes/auth');
+//--------------------------End of Import-------------------------//
 
 const app = express();
 connect();
+passportConfig(passport);
 
 app.set('port', process.env.PORT || 8001 );
 
-//미들웨어
+//Middleware
 app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -41,12 +39,15 @@ app.use(session({
 }))
 
 app.use(flash());
+app.use(passport.initialize());
+app.use(passport.session());
+require('./passport/passportConfig')
+//--------------------------End of Middleware-------------------------//
 
-//라우터
 
-app.use('/',PageRouter);
-
-
+//Router
+app.use('/',authRouter);
+//--------------------------End of Router-------------------------//
 
 
 app.listen(app.get('port'),()=>{
